@@ -60,7 +60,7 @@ class ClassSpecificImageGeneration():
             # Update image
             optimizer.step()
             # Recreate image
-            self.created_image = recreate_image(self.processed_image)
+            self.created_image = recreate_image(self.processed_image, self.mean, self.std)
             if i % 25 == 0:
                 # Save image
                 im_path = '../generated/'+ str(self.name)+'_iteration_'+str(i)+'.jpg'
