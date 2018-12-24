@@ -1,8 +1,8 @@
 # Convolutional Neural Network Visualizations 
 
-***Library Original Author: Utku Ozbulak - github.com/utkuozbulak
+***Library Original Author: Utku Ozbulak - github.com/utkuozbulak***
 
-Modified by: Thomas Dekelver - git.bdbelux.be/tdekelver 	in order to be able to use it with ResNets + add flexibility***
+***Modified by: Thomas Dekelver - git.bdbelux.be/tdekelver 	in order to be able to use it with ResNets + add flexibility***
 
 **Note**: I removed cv2 dependencies and moved the repository towards PIL. A few things might be broken (although I tested all methods), I would appreciate if you could create an issue if something does not work.
 

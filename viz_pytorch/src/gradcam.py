@@ -1,7 +1,11 @@
 """
 Created on Thu Oct 26 11:06:51 2017
 
-@author: Utku Ozbulak - github.com/utkuozbulak
+Original Author:
+Utku Ozbulak - github.com/utkuozbulak
+
+Changes made by:
+Thomas Dekelver - git.bdbelux.be/tdekelver
 """
 import cv2
 import numpy as np
@@ -27,7 +31,7 @@ class CamExtractor():
             Does a forward pass on convolutions, hooks the function at given layer
         """
         conv_output = None
-        for module_pos, module in self.model.features._modules.items():
+        for module_pos, module in enumerate(self.model[0].modules()):
             x = module(x)  # Forward
             if int(module_pos) == self.target_layer:
                 x.register_hook(self.save_gradient)
@@ -42,7 +46,7 @@ class CamExtractor():
         conv_output, x = self.forward_pass_on_convolutions(x)
         x = x.view(x.size(0), -1)  # Flatten
         # Forward pass on the classifier
-        x = self.model.classifier(x)
+        x = self.model[1](x)
         return conv_output, x
 
 

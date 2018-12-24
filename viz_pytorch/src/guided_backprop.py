@@ -1,7 +1,11 @@
 """
 Created on Thu Oct 26 11:23:47 2017
 
-@author: Utku Ozbulak - github.com/utkuozbulak
+Original Author:
+Utku Ozbulak - github.com/utkuozbulak
+
+Changes made by:
+Thomas Dekelver - git.bdbelux.be/tdekelver
 """
 import torch
 from torch.nn import ReLU
@@ -29,7 +33,7 @@ class GuidedBackprop():
             self.gradients = grad_in[0]
 
         # Register hook to the first layer
-        first_layer = list(self.model.features._modules.items())[0][1]
+        first_layer = list(self.model.children())[0]
         first_layer.register_backward_hook(hook_function)
 
     def update_relus(self):
@@ -43,7 +47,7 @@ class GuidedBackprop():
             if isinstance(module, ReLU):
                 return (torch.clamp(grad_in[0], min=0.0),)
         # Loop through layers, hook up ReLUs with relu_hook_function
-        for pos, module in self.model.features._modules.items():
+        for module in self.model.modules():
             if isinstance(module, ReLU):
                 module.register_backward_hook(relu_hook_function)
 
