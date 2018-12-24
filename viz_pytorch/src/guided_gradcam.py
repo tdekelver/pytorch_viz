@@ -1,7 +1,11 @@
 """
 Created on Thu Oct 23 11:27:15 2017
 
-@author: Utku Ozbulak - github.com/utkuozbulak
+Original Author:
+Utku Ozbulak - github.com/utkuozbulak
+
+Changes made by:
+Thomas Dekelver - git.bdbelux.be/tdekelver
 """
 import numpy as np
 
