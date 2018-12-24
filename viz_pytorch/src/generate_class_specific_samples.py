@@ -42,7 +42,7 @@ class ClassSpecificImageGeneration():
         i = 0
         while loss >= self.min_loss:
             # Process image and return variable
-            self.processed_image = preprocess_image(self.created_image, False)
+            self.processed_image = preprocess_image(self.created_image, self.mean, self.std, False)
             # Define optimizer for the image
             optimizer = SGD([self.processed_image], lr=initial_learning_rate)
             # Forward
@@ -74,5 +74,5 @@ class ClassSpecificImageGeneration():
 if __name__ == '__main__':
     target_class = 130  # Flamingo
     pretrained_model = models.resnet18(pretrained=True)
-    csig = ClassSpecificImageGeneration(pretrained_model, target_class)
+    csig = ClassSpecificImageGeneration(pretrained_model, target_class,mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
     csig.generate()
