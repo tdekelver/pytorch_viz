@@ -34,6 +34,9 @@ class GuidedBackprop():
 
         # Register hook to the first layer
         first_layer = list(self.model.children())[0]
+        if type(first_layer) != torch.nn.modules.conv.Conv2d:
+            # Means we're using model that has sequential block in front =>
+            first_layer = list(self.model[0].children())[0]
         first_layer.register_backward_hook(hook_function)
 
     def update_relus(self):
