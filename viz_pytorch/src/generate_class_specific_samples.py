@@ -21,7 +21,7 @@ class ClassSpecificImageGeneration():
     """
         Produces an image that maximizes a certain class with gradient ascent
     """
-    def __init__(self, model, target_class,mean,std,lr = 6,min_loss = -1000,name = 'generated'):
+    def __init__(self, model, target_class,mean,std,lr = 6,min_loss = -1000,name = 'generated', optim = None):
         self.mean = mean # mean of channels (in fastai: data.norm.keywords['mean'])
         self.std = std # std of channels (in fastai: data.norm.keywords['std'])
         self.lr = lr # initial learning rate to use (default 6)
@@ -32,6 +32,7 @@ class ClassSpecificImageGeneration():
         self.target_class = target_class
         # Generate a random image
         self.created_image = np.uint8(np.random.uniform(0, 255, (224, 224, 3)))
+        self.optim = optim
         # Create the folder to export images if not exists
         if not os.path.exists('../generated'):
             os.makedirs('../generated')
@@ -40,11 +41,14 @@ class ClassSpecificImageGeneration():
         initial_learning_rate = self.lr
         loss = 10
         i = 0
+        if self.optim == None:
+            optimizer = SGD([self.processed_image], lr=initial_learning_rate)
+        else:
+            optimizer = self.optim
         while loss >= self.min_loss:
             # Process image and return variable
             self.processed_image = preprocess_image(self.created_image, self.mean, self.std, False)
-            # Define optimizer for the image
-            optimizer = SGD([self.processed_image], lr=initial_learning_rate)
+            
             # Forward
             output = self.model(self.processed_image)
             # Target specific class
