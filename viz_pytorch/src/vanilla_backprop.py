@@ -1,7 +1,11 @@
 """
 Created on Thu Oct 26 11:19:58 2017
 
-@author: Utku Ozbulak - github.com/utkuozbulak
+Original Author:
+Utku Ozbulak - github.com/utkuozbulak
+
+Changes made by:
+Thomas Dekelver - git.bdbelux.be/tdekelver
 """
 import torch
 
@@ -25,7 +29,10 @@ class VanillaBackprop():
             self.gradients = grad_in[0]
 
         # Register hook to the first layer
-        first_layer = list(self.model.features._modules.items())[0][1]
+        first_layer = list(self.model.children())[0]
+        if type(first_layer) != torch.nn.modules.conv.Conv2d:
+            # Means we're using model that has sequential block in front =>
+            first_layer = list(self.model[0].children())[0]
         first_layer.register_backward_hook(hook_function)
 
     def generate_gradients(self, input_image, target_class):

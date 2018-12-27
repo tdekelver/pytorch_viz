@@ -1,7 +1,11 @@
 """
 Created on Wed Mar 28 10:12:13 2018
 
-@author: Utku Ozbulak - github.com/utkuozbulak
+Original Author:
+Utku Ozbulak - github.com/utkuozbulak
+
+Changes made by:
+Thomas Dekelver - git.bdbelux.be/tdekelver
 """
 import numpy as np
 
@@ -12,7 +16,7 @@ from misc_functions import (get_example_params,
                             convert_to_grayscale,
                             save_gradient_images)
 from vanilla_backprop import VanillaBackprop
-# from guided_backprop import GuidedBackprop  # To use with guided backprop
+from guided_backprop import GuidedBackprop  # To use with guided backprop
 
 
 def generate_smooth_grad(Backprop, prep_img, target_class, param_n, param_sigma_multiplier):
@@ -52,7 +56,7 @@ if __name__ == '__main__':
         get_example_params(target_example)
 
     VBP = VanillaBackprop(pretrained_model)
-    # GBP = GuidedBackprop(pretrained_model)  # if you want to use GBP dont forget to
+    GBP = GuidedBackprop(pretrained_model)  # if you want to use GBP dont forget to
     # change the parametre in generate_smooth_grad
 
     param_n = 50
