@@ -102,7 +102,7 @@ class GradCam():
         cam = np.maximum(cam, 0)
         cam = (cam - np.min(cam)) / (np.max(cam) - np.min(cam))  # Normalize between 0-1
         cam = np.uint8(cam * 255)  # Scale between 0-255 to visualize
-        return cam
+        return cam, guided_gradients, target, weights
 
 
 if __name__ == '__main__':
