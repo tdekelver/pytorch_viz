@@ -40,10 +40,10 @@ class CamExtractor():
                 names = [w[0] for w in module.named_modules()]
                 if 'downsample' in names:
                     pass_until = module_pos + len(names)
-                    print("downsample \t" + str(module_pos) + '\t pass until \t' + str(pass_until))
+                    #print("downsample \t" + str(module_pos) + '\t pass until \t' + str(pass_until))
                     x = module(x)  # Forward
             else:  # Check to be sure we are not in a Sequential or basisblock
-                print(module_pos)
+                #print(module_pos)
                 x = module(x)  # Forward
                 if int(module_pos) == self.target_layer:
                     x.register_hook(self.save_gradient)
@@ -98,11 +98,11 @@ class GradCam():
         # Multiply each weight with its conv output and then, sum
         for i, w in enumerate(weights):
             cam += w * target[i, :, :]
-        cam = cv2.resize(cam, (224, 224))
+        cam = cv2.resize(cam, (input_image.shape[2], input_image.shape[3]))
         cam = np.maximum(cam, 0)
         cam = (cam - np.min(cam)) / (np.max(cam) - np.min(cam))  # Normalize between 0-1
         cam = np.uint8(cam * 255)  # Scale between 0-255 to visualize
-        return cam, guided_gradients, target, weights
+        return cam
 
 
 if __name__ == '__main__':
