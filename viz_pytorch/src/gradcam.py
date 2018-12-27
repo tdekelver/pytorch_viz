@@ -56,7 +56,7 @@ class CamExtractor():
         """
         # Forward pass on the convolutions
         conv_output, x = self.forward_pass_on_convolutions(x)
-        x = x.view(x.size(0), -1)  # Flatten
+        #x = x.view(x.size(0), -1)  # Flatten
         # Forward pass on the classifier
         x = self.model[1](x)
         return conv_output, x
