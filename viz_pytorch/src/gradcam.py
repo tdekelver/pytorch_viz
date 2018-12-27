@@ -31,8 +31,18 @@ class CamExtractor():
             Does a forward pass on convolutions, hooks the function at given layer
         """
         conv_output = None
+        pass_until = 0
         for module_pos, module in enumerate(self.model[0].modules()):
-            if len([x for x in module.children()]) == 0:  # Check to be sure we are not in a Sequential or basisblock
+            if module_pos < pass_until:
+                continue # when have a downsampling layer, we take the basic building block instead of each layer separately to avoid tensor shape issues
+            elif len([x for x in module.children()]) != 0:
+                # Check names of children
+                names = [w[0] for w in a[1].named_modules()]
+                if 'downsample' in names:
+                    pass_until = module_pos + len(names)
+                    print("downsample \t" + str(module_pos) + '\t pass until \t' + str(pass_until))
+                    x = module(x)  # Forward
+            else:  # Check to be sure we are not in a Sequential or basisblock
                 print(module_pos)
                 x = module(x)  # Forward
                 if int(module_pos) == self.target_layer:
