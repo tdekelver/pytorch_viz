@@ -27,8 +27,26 @@ class CNNLayerVisualization():
         # Generate a random image
         self.created_image = np.uint8(np.random.uniform(150, 180, (224, 224, 3)))
         # Create the folder to export images if not exists
+        self.layers = []
         if not os.path.exists('../generated'):
             os.makedirs('../generated')
+
+    def create_layer_list(self):
+        pass_until = 0
+        for module_pos, module in enumerate(self.model.modules()):
+            if module_pos < pass_until:
+                continue  # when have a downsampling layer, we take the basic building block instead of each layer separately to avoid tensor shape issues
+            elif len([x for x in module.children()]) != 0:
+                # Check names of children
+                names = [w[0] for w in module.named_modules()]
+                if 'downsample' in names:
+                    pass_until = module_pos + len(names)
+                    # print("downsample \t" + str(module_pos) + '\t pass until \t' + str(pass_until))
+                    self.layers.append(module)  # Forward
+            else:  # Check to be sure we are not in a Sequential or basisblock
+                # print(module_pos)
+                self.layers.append(module)  # Forward
+        return self.layers
 
     def hook_layer(self):
         def hook_function(module, grad_in, grad_out):
@@ -36,20 +54,24 @@ class CNNLayerVisualization():
             self.conv_output = grad_out[0, self.selected_filter]
 
         # Hook the selected layer
-        self.model[self.selected_layer].register_forward_hook(hook_function)
+        self.layers[self.selected_layer].register_forward_hook(hook_function)
 
-    def visualise_layer_with_hooks(self):
+    def visualise_layer_with_hooks(self, optim = None, iterations = 30):
         # Hook the selected layer
         self.hook_layer()
         # Process image and return variable
         self.processed_image = preprocess_image(self.created_image, False)
         # Define optimizer for the image
-        optimizer = Adam([self.processed_image], lr=0.1, weight_decay=1e-6)
-        for i in range(1, 31):
+        if optim == None:
+            optimizer = Adam([self.processed_image], lr=0.1, weight_decay=1e-6)
+        else:
+            optimizer = optim
+
+        for i in range(1, iterations + 1):
             optimizer.zero_grad()
             # Assign create image to a variable to move forward in the model
             x = self.processed_image
-            for index, layer in enumerate(self.model):
+            for index, layer in enumerate(self.layers):
                 # Forward pass layer by layer
                 # x is not used after this point because it is only needed to trigger
                 # the forward hook function
@@ -74,16 +96,19 @@ class CNNLayerVisualization():
                     '_f' + str(self.selected_filter) + '_iter' + str(i) + '.jpg'
                 save_image(self.created_image, im_path)
 
-    def visualise_layer_without_hooks(self):
+    def visualise_layer_without_hooks(self, optim = None, iterations = 30):
         # Process image and return variable
         self.processed_image = preprocess_image(self.created_image)
         # Define optimizer for the image
-        optimizer = Adam([self.processed_image], lr=0.1, weight_decay=1e-6)
-        for i in range(1, 31):
+        if optim == None:
+            optimizer = Adam([self.processed_image], lr=0.1, weight_decay=1e-6)
+        else:
+            optimizer = optim
+        for i in range(1, iterations + 1):
             optimizer.zero_grad()
             # Assign create image to a variable to move forward in the model
             x = self.processed_image
-            for index, layer in enumerate(self.model):
+            for index, layer in enumerate(self.layers):
                 # Forward pass layer by layer
                 x = layer(x)
                 if index == self.selected_layer:
@@ -119,6 +144,9 @@ if __name__ == '__main__':
     # Fully connected layer is not needed
     pretrained_model = models.resnet32(pretrained=True)[0]
     layer_vis = CNNLayerVisualization(pretrained_model, cnn_layer, filter_pos)
+
+    # Generate layer list
+    layer_vis.create_layer_list()
 
     # Layer visualization with pytorch hooks
     layer_vis.visualise_layer_with_hooks()
