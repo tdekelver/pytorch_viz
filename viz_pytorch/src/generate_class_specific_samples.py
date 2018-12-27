@@ -48,7 +48,7 @@ class ClassSpecificImageGeneration():
         while loss >= self.min_loss:
             # Process image and return variable
             self.processed_image = preprocess_image(self.created_image, self.mean, self.std, False)
-            
+
             # Forward
             output = self.model(self.processed_image)
             # Target specific class
