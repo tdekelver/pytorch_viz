@@ -88,7 +88,8 @@ def apply_colormap_on_image(org_im, activation, colormap_name):
     """
     # Get colormap
     color_map = mpl_color_map.get_cmap(colormap_name)
-    no_trans_heatmap = color_map(activation)
+    no_trans_heatmap = color_map(activation).transpose(1, 0, 2) #transpose to have col, row, channels such that is imported correctly later in
+                                                                # the Image.fromarray()
     # Change alpha channel in colormap to make sure original image is displayed
     heatmap = copy.copy(no_trans_heatmap)
     heatmap[:, :, 3] = 0.4
