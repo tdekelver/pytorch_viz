@@ -37,7 +37,7 @@ class CamExtractor():
                 continue # when have a downsampling layer, we take the basic building block instead of each layer separately to avoid tensor shape issues
             elif len([x for x in module.children()]) != 0:
                 # Check names of children
-                names = [w[0] for w in a[1].named_modules()]
+                names = [w[0] for w in module.named_modules()]
                 if 'downsample' in names:
                     pass_until = module_pos + len(names)
                     print("downsample \t" + str(module_pos) + '\t pass until \t' + str(pass_until))
