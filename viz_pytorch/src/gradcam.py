@@ -33,6 +33,7 @@ class CamExtractor():
         conv_output = None
         for module_pos, module in enumerate(self.model[0].modules()):
             if type(module) != torch.nn.modules.container.Sequential:
+                print(module_pos)
                 x = module(x)  # Forward
                 if int(module_pos) == self.target_layer:
                     x.register_hook(self.save_gradient)
