@@ -32,7 +32,7 @@ class CamExtractor():
         """
         conv_output = None
         for module_pos, module in enumerate(self.model[0].modules()):
-            if type(module) != torch.nn.modules.container.Sequential:
+            if len([x for x in module.children()]) == 0:  # Check to be sure we are not in a Sequential or basisblock
                 print(module_pos)
                 x = module(x)  # Forward
                 if int(module_pos) == self.target_layer:
