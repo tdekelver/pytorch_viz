@@ -32,10 +32,11 @@ class CamExtractor():
         """
         conv_output = None
         for module_pos, module in enumerate(self.model[0].modules()):
-            x = module(x)  # Forward
-            if int(module_pos) == self.target_layer:
-                x.register_hook(self.save_gradient)
-                conv_output = x  # Save the convolution output on that layer
+            if type(module) != torch.nn.modules.container.Sequential:
+                x = module(x)  # Forward
+                if int(module_pos) == self.target_layer:
+                    x.register_hook(self.save_gradient)
+                    conv_output = x  # Save the convolution output on that layer
         return conv_output, x
 
     def forward_pass(self, x):
