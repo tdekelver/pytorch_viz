@@ -100,7 +100,7 @@ class CNNLayerVisualization():
 
     def visualise_layer_without_hooks(self, optim = None, iterations = 30):
         # Process image and return variable
-        self.processed_image = preprocess_image(self.created_image, self.mean, self.std)
+        self.processed_image = preprocess_image(self.created_image, self.mean, self.std, False)
         # Define optimizer for the image
         if optim == None:
             optimizer = Adam([self.processed_image], lr=0.1, weight_decay=1e-6)
