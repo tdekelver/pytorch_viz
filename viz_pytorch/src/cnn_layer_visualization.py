@@ -18,11 +18,13 @@ class CNNLayerVisualization():
         Produces an image that minimizes the loss of a convolution
         operation for a specific layer and filter
     """
-    def __init__(self, model, selected_layer, selected_filter):
+    def __init__(self, model, selected_layer, selected_filter,mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225]):
         self.model = model
         self.model.eval()
         self.selected_layer = selected_layer
         self.selected_filter = selected_filter
+        self.mean = mean  # mean of channels (in fastai: data.norm.keywords['mean'])
+        self.std = std  # std of channels (in fastai: data.norm.keywords['std'])
         self.conv_output = 0
         # Generate a random image
         self.created_image = np.uint8(np.random.uniform(150, 180, (224, 224, 3)))
@@ -60,7 +62,7 @@ class CNNLayerVisualization():
         # Hook the selected layer
         self.hook_layer()
         # Process image and return variable
-        self.processed_image = preprocess_image(self.created_image, False)
+        self.processed_image = preprocess_image(self.created_image, self.mean, self.std, False)
         # Define optimizer for the image
         if optim == None:
             optimizer = Adam([self.processed_image], lr=0.1, weight_decay=1e-6)
@@ -89,7 +91,7 @@ class CNNLayerVisualization():
             # Update image
             optimizer.step()
             # Recreate image
-            self.created_image = recreate_image(self.processed_image)
+            self.created_image = recreate_image(self.processed_image, self.mean, self.std)
             # Save image
             if i % 5 == 0:
                 im_path = '../generated/layer_vis_l' + str(self.selected_layer) + \
@@ -98,7 +100,7 @@ class CNNLayerVisualization():
 
     def visualise_layer_without_hooks(self, optim = None, iterations = 30):
         # Process image and return variable
-        self.processed_image = preprocess_image(self.created_image)
+        self.processed_image = preprocess_image(self.created_image, self.mean, self.std)
         # Define optimizer for the image
         if optim == None:
             optimizer = Adam([self.processed_image], lr=0.1, weight_decay=1e-6)
@@ -130,7 +132,7 @@ class CNNLayerVisualization():
             # Update image
             optimizer.step()
             # Recreate image
-            self.created_image = recreate_image(self.processed_image)
+            self.created_image = recreate_image(self.processed_image, self.mean, self.std)
             # Save image
             if i % 5 == 0:
                 im_path = '../generated/layer_vis_l' + str(self.selected_layer) + \
