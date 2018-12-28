@@ -11,7 +11,7 @@ import os
 import cv2
 import numpy as np
 
-from torch.optim import SGD
+from torch.optim import SGD,Adam
 from torchvision import models
 
 from misc_functions import preprocess_image, recreate_image, save_image
