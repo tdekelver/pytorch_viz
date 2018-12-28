@@ -42,7 +42,7 @@ class ClassSpecificImageGeneration():
         loss = 10
         i = 0
         if self.optim == None:
-            optimizer = SGD([self.processed_image], lr=initial_learning_rate)
+            optimizer = Adam([self.processed_image], lr=initial_learning_rate, weight_decay=1e-6)
         else:
             optimizer = self.optim
         while loss >= self.min_loss:
