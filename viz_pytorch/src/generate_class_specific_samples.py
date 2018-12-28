@@ -41,14 +41,14 @@ class ClassSpecificImageGeneration():
         initial_learning_rate = self.lr
         loss = 10
         i = 0
-        if self.optim == None:
-            optimizer = Adam([self.processed_image], lr=initial_learning_rate, weight_decay=1e-6)
-        else:
-            optimizer = self.optim
+
         while loss >= self.min_loss:
             # Process image and return variable
             self.processed_image = preprocess_image(self.created_image, self.mean, self.std, False)
-
+            if self.optim == None:
+                optimizer = Adam([self.processed_image], lr=initial_learning_rate, weight_decay=1e-6)
+            else:
+                optimizer = self.optim
             # Forward
             output = self.model(self.processed_image)
             # Target specific class
