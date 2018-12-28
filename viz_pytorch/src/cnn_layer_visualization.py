@@ -58,7 +58,7 @@ class CNNLayerVisualization():
         # Hook the selected layer
         self.layers[self.selected_layer].register_forward_hook(hook_function)
 
-    def visualise_layer_with_hooks(self, optim = None, iterations = 30):
+    def visualise_layer_with_hooks(self, optim = None, iterations = 30, save_only_last = True):
         # Hook the selected layer
         self.hook_layer()
         # Process image and return variable
@@ -93,12 +93,18 @@ class CNNLayerVisualization():
             # Recreate image
             self.created_image = recreate_image(self.processed_image, self.mean, self.std)
             # Save image
-            if i % 5 == 0:
-                im_path = '../generated/layer_vis_l' + str(self.selected_layer) + \
-                    '_f' + str(self.selected_filter) + '_iter' + str(i) + '.jpg'
-                save_image(self.created_image, im_path)
+            if not save_only_last:
+                if i % 5 == 0:
+                    im_path = '../generated/layer_vis_l' + str(self.selected_layer) + \
+                        '_f' + str(self.selected_filter) + '_iter' + str(i) + '.jpg'
+                    save_image(self.created_image, im_path)
+            else:
+                if i ==iterations:
+                    im_path = '../generated/layer_vis_l' + str(self.selected_layer) + \
+                              '_f' + str(self.selected_filter) + '_iter' + str(i) + '.jpg'
+                    save_image(self.created_image, im_path)
 
-    def visualise_layer_without_hooks(self, optim = None, iterations = 30):
+    def visualise_layer_without_hooks(self, optim = None, iterations = 30, save_only_last=  True):
         # Process image and return variable
         self.processed_image = preprocess_image(self.created_image, self.mean, self.std, False)
         # Define optimizer for the image
@@ -134,11 +140,16 @@ class CNNLayerVisualization():
             # Recreate image
             self.created_image = recreate_image(self.processed_image, self.mean, self.std)
             # Save image
-            if i % 5 == 0:
-                im_path = '../generated/layer_vis_l' + str(self.selected_layer) + \
-                    '_f' + str(self.selected_filter) + '_iter' + str(i) + '.jpg'
-                save_image(self.created_image, im_path)
-
+            if not save_only_last:
+                if i % 5 == 0:
+                    im_path = '../generated/layer_vis_l' + str(self.selected_layer) + \
+                        '_f' + str(self.selected_filter) + '_iter' + str(i) + '.jpg'
+                    save_image(self.created_image, im_path)
+            else:
+                if i ==iterations:
+                    im_path = '../generated/layer_vis_l' + str(self.selected_layer) + \
+                              '_f' + str(self.selected_filter) + '_iter' + str(i) + '.jpg'
+                    save_image(self.created_image, im_path)
 
 if __name__ == '__main__':
     cnn_layer = 17
